@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>WakiliDesk – Prototype</title>
+    <style>
+      :root {
+        --bg: #f2f4f4;
+        --card: #fff;
+        --ink: #16262a;
+        --mut: #5d6f73;
+        --line: #d9e0e1;
+        --nav: #12312b;
+        --acc: #e0a106;
+        --ok: #1f7a4d;
+        --bad: #b3362b;
+        --soft: #e8eeee;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0e1819;
+          --card: #16262a;
+          --ink: #e6eeee;
+          --mut: #93a7aa;
+          --line: #26393d;
+          --nav: #0a211d;
+          --soft: #1d3135;
+          --ok: #4fc08a;
+          --bad: #ef7d72;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #0e1819;
+        --card: #16262a;
+        --ink: #e6eeee;
+        --mut: #93a7aa;
+        --line: #26393d;
+        --nav: #0a211d;
+        --soft: #1d3135;
+        --ok: #4fc08a;
+        --bad: #ef7d72;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.5 system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        margin: 0 0 0.5rem;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      .shell {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: 100vh;
+      }
+      aside {
+        background: var(--nav);
+        color: #dfeae7;
+        padding: 1.2rem 0.8rem;
+      }
+      .brand {
+        font:
+          700 1.3rem Georgia,
+          serif;
+        padding: 0 0.6rem 1rem;
+        color: #fff;
+      }
+      .brand i {
+        color: var(--acc);
+        font-style: normal;
+      }
+      .nav button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: 0;
+        color: inherit;
+        padding: 0.6rem 0.8rem;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .nav button:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .nav button.on {
+        background: var(--acc);
+        color: #1b1500;
+        font-weight: 600;
+      }
+      main {
+        padding: 1.5rem;
+        max-width: 1100px;
+        width: 100%;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      .who {
+        color: var(--mut);
+        font-size: 0.85rem;
+      }
+      .who button {
+        margin-left: 0.5rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+      }
+      .hero {
+        border-left: 6px solid var(--acc);
+      }
+      .hero b {
+        font:
+          700 2.6rem Georgia,
+          serif;
+        margin-right: 0.6rem;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.55rem 0.6rem;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      th {
+        color: var(--mut);
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      tr.link {
+        cursor: pointer;
+      }
+      tr.link:hover {
+        background: var(--soft);
+      }
+      .chip {
+        padding: 0.1rem 0.55rem;
+        border-radius: 99px;
+        background: var(--soft);
+        font-size: 0.8rem;
+      }
+      .chip.ok {
+        color: var(--ok);
+      }
+      .chip.bad {
+        color: var(--bad);
+      }
+      .chip.warn {
+        background: var(--acc);
+        color: #1b1500;
+      }
+      .btn {
+        background: var(--nav);
+        color: #fff;
+        border: 0;
+        border-radius: 6px;
+        padding: 0.5rem 0.9rem;
+        cursor: pointer;
+      }
+      .btn.alt {
+        background: var(--soft);
+        color: var(--ink);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      input,
+      select {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0.45rem 0.6rem;
+      }
+      .bar {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      .bar input {
+        flex: 1;
+        min-width: 160px;
+      }
+      .kv {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.8rem;
+      }
+      .kv span {
+        display: block;
+        color: var(--mut);
+        font-size: 0.8rem;
+      }
+      .login {
+        max-width: 420px;
+        margin: 12vh auto;
+        padding: 1.5rem;
+      }
+      .login button {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+        text-align: left;
+        padding: 0.8rem;
+      }
+      .note {
+        background: var(--soft);
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        color: var(--mut);
+        border-radius: 6px;
+        margin-bottom: 1rem;
+      }
+      .toast {
+        position: fixed;
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        right: 1rem;
+        background: var(--nav);
+        color: #fff;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      tr:focus-visible {
+        outline: 2px solid var(--acc);
+        outline-offset: 2px;
+      }
+      @media (max-width: 800px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+        aside {
+          padding: 0.6rem;
+        }
+        .brand {
+          padding-bottom: 0.4rem;
+        }
+        .nav {
+          display: flex;
+          overflow-x: auto;
+        }
+        .nav button {
+          width: auto;
+          white-space: nowrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"]/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+        );
+      const T = new Date();
+      T.setHours(0, 0, 0, 0);
+      const D = (n) => {
+        const x = new Date(T);
+        x.setDate(x.getDate() + n);
+        return x.toISOString().slice(0, 10);
+      };
+      const dl = (i) => Math.round((new Date(i + "T00:00:00") - T) / 864e5);
+      const fd = (i) =>
+        new Date(i + "T00:00:00").toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      const K = (n) => "KES " + Math.round(n).toLocaleString("en-US"),
+        RATE = 8000;
+      const S = {
+        role: null,
+        page: "dashboard",
+        mid: null,
+        q: "",
+        f: "All",
+        toast: "",
+        clients: [
+          { id: 1, name: "Wanjiru Kamau", type: "Individual", phone: "0712 345 678" },
+          { id: 2, name: "Mwangi Holdings Ltd", type: "Company", phone: "020 222 4100" },
+          { id: 3, name: "Otieno & Sons Traders", type: "Company", phone: "0722 880 019" },
+          { id: 4, name: "Amina Hassan", type: "Individual", phone: "0733 104 552" },
+        ],
+        matters: [
+          {
+            id: 1,
+            no: "HCCC E214 of 2026",
+            title: "Kamau v. Nairobi Estates Ltd",
+            c: 1,
+            court: "Milimani Law Courts",
+            type: "Civil",
+            st: "Active",
+            adv: "J. Njeri",
+          },
+          {
+            id: 2,
+            no: "ELC 87 of 2026",
+            title: "Mwangi Holdings land dispute",
+            c: 2,
+            court: "ELC Milimani",
+            type: "Land",
+            st: "Active",
+            adv: "P. Mutua",
+          },
+          {
+            id: 3,
+            no: "CR 412 of 2026",
+            title: "Republic v. Otieno",
+            c: 3,
+            court: "Kibera Law Courts",
+            type: "Criminal",
+            st: "Pending",
+            adv: "J. Njeri",
+          },
+          {
+            id: 4,
+            no: "SUCC 33 of 2026",
+            title: "Estate of the late H. Hassan",
+            c: 4,
+            court: "Family Division",
+            type: "Succession",
+            st: "Closed",
+            adv: "P. Mutua",
+          },
+        ],
+        dls: [
+          { m: 1, t: "Hearing: directions", d: D(2), k: "Hearing" },
+          { m: 2, t: "File replying affidavit", d: D(4), k: "Filing" },
+          { m: 3, t: "Plea taking", d: D(9), k: "Hearing" },
+          { m: 1, t: "Serve list of documents", d: D(15), k: "Filing" },
+        ],
+        docs: [
+          { m: 1, n: "Plaint.pdf", by: "J. Njeri", d: D(-20), a: "Advocates" },
+          { m: 1, n: "Sale agreement.pdf", by: "Wanjiru Kamau", d: D(-18), a: "Firm" },
+          { m: 2, n: "Title deed copy.pdf", by: "P. Mutua", d: D(-9), a: "Advocates" },
+        ],
+        time: [
+          { m: 1, x: "Drafted plaint", h: 3.5, b: true },
+          { m: 1, x: "Client consultation", h: 1, b: false },
+          { m: 2, x: "Site visit and notes", h: 2.5, b: false },
+        ],
+        inv: [
+          { no: "INV-001", m: 1, amt: 28000, st: "Paid", due: D(-5) },
+          { no: "INV-002", m: 4, amt: 64000, st: "Sent", due: D(6) },
+        ],
+      };
+      const mt = (id) => S.matters.find((m) => m.id == id),
+        cl = (id) => S.clients.find((c) => c.id == id);
+      const unb = (m) => S.time.filter((t) => t.m == m && !t.b).reduce((a, t) => a + t.h, 0);
+      const NAV = {
+        Admin: ["dashboard", "matters", "clients", "calendar", "documents", "invoices"],
+        Advocate: ["dashboard", "matters", "clients", "calendar", "documents"],
+        Accounts: ["dashboard", "clients", "invoices"],
+      };
+      const LBL = {
+        dashboard: "Dashboard",
+        matters: "Matters",
+        clients: "Clients",
+        calendar: "Deadlines",
+        documents: "Documents",
+        invoices: "Invoices",
+      };
+      const go = (p, id) => {
+          S.page = p;
+          S.mid = id || null;
+          render();
+        },
+        say = (m) => {
+          S.toast = m;
+          render();
+          setTimeout(() => {
+            S.toast = "";
+            render();
+          }, 1800);
+        };
+      const val = (id) => document.getElementById(id).value;
+      const chip = (d) => {
+        const n = dl(d);
+        return `<span class="chip ${n <= 3 ? "warn" : ""}">${n < 0 ? "overdue" : n == 0 ? "today" : "in " + n + " days"}</span>`;
+      };
+      function addTime() {
+        const x = val("tx").trim(),
+          h = parseFloat(val("th"));
+        if (!x || !(h > 0)) return say("Enter a description and hours");
+        S.time.push({ m: S.mid, x, h, b: false });
+        say("Time entry saved");
+      }
+      function genInv() {
+        const m = S.mid,
+          u = unb(m);
+        S.time.filter((t) => t.m == m).forEach((t) => (t.b = true));
+        S.inv.push({
+          no: "INV-00" + (S.inv.length + 1),
+          m,
+          amt: u * RATE,
+          st: "Draft",
+          due: D(14),
+        });
+        say("Invoice created");
+      }
+      function addDl() {
+        const t = val("dt").trim(),
+          d = val("dd"),
+          m = val("dm");
+        if (!t || !d) return say("Enter a title and date");
+        S.dls.push({ m: +m, t, d, k: val("dk") });
+        say("Deadline added");
+      }
+      function upload() {
+        S.docs.push({
+          m: S.mid,
+          n: "New document " + (S.docs.length + 1) + ".pdf",
+          by: S.role,
+          d: D(0),
+          a: "Advocates",
+        });
+        say("Document uploaded");
+      }
+      function pay(no) {
+        S.inv.find((i) => i.no == no).st = "Paid";
+        say("Marked as paid");
+      }
+      function login() {
+        return `<div class="card login"><h1>WakiliDesk</h1><p class="who">Case, document and billing management for law firms. Sign in as:</p>
+${["Admin", "Advocate", "Accounts"].map((r) => `<button class="btn alt" onclick="S.role='${r}';go('dashboard')"><b>${r}</b><br><span class="who">${{ Admin: "Sees everything and manages users", Advocate: "Cases, deadlines and documents", Accounts: "Clients and invoices only" }[r]}</span></button>`).join("")}</div>`;
+      }
+      function dash() {
+        const nx = [...S.dls].sort((a, b) => (a.d < b.d ? -1 : 1))[0],
+          n = dl(nx.d),
+          open = S.matters.filter((m) => m.st != "Closed").length,
+          hrs = S.time.filter((t) => !t.b).reduce((a, t) => a + t.h, 0),
+          owed = S.inv.filter((i) => i.st != "Paid").reduce((a, i) => a + i.amt, 0);
+        return `<div class="card hero"><b>${n}</b>days to your next date<br><span class="who">${esc(nx.t)} · ${esc(mt(nx.m).title)} · ${fd(nx.d)}</span></div>
+<div class="row"><div class="card"><span class="who">Open matters</span><h1>${open}</h1></div><div class="card"><span class="who">Unbilled hours</span><h1>${hrs}</h1></div><div class="card"><span class="who">Outstanding invoices</span><h1>${K(owed)}</h1></div></div>
+<div class="card"><h2>Upcoming deadlines</h2>${dlTable(S.dls.slice(0, 4))}</div>`;
+      }
+      function dlTable(a) {
+        return `<table><tr><th>Date</th><th>Deadline</th><th>Matter</th><th></th></tr>${[...a]
+          .sort((x, y) => (x.d < y.d ? -1 : 1))
+          .map(
+            (d) =>
+              `<tr><td>${fd(d.d)}</td><td>${esc(d.t)} <span class="chip">${d.k}</span></td><td>${esc(mt(d.m).no)}</td><td>${chip(d.d)}</td></tr>`,
+          )
+          .join("")}</table>`;
+      }
+      function matters() {
+        const L = S.matters.filter(
+          (m) =>
+            (S.f == "All" || m.st == S.f) &&
+            (m.title + m.no + cl(m.c).name).toLowerCase().includes(S.q.toLowerCase()),
+        );
+        return `<div class="bar"><input id="q" placeholder="Search matters, case numbers or clients" value="${esc(S.q)}" oninput="S.q=this.value;render(1)"><select onchange="S.f=this.value;render()">${["All", "Active", "Pending", "Closed"].map((x) => `<option ${x == S.f ? "selected" : ""}>${x}</option>`).join("")}</select><button class="btn" onclick="say('New matter form would open here')">New matter</button></div>
+<div class="card"><table><tr><th>Case no.</th><th>Title</th><th>Client</th><th>Status</th><th>Advocate</th></tr>${L.map((m) => `<tr class="link" tabindex="0" onclick="go('matter',${m.id})" onkeydown="if(event.key=='Enter')go('matter',${m.id})"><td>${esc(m.no)}</td><td>${esc(m.title)}</td><td>${esc(cl(m.c).name)}</td><td><span class="chip">${m.st}</span></td><td>${esc(m.adv)}</td></tr>`).join("") || "<tr><td>No matters match. Clear the search to see all.</td></tr>"}</table></div>`;
+      }
+      function matter() {
+        const m = mt(S.mid),
+          T2 = S.time.filter((t) => t.m == m.id),
+          u = unb(m.id);
+        return `<button class="btn alt" onclick="go('matters')">Back to matters</button><h1 style="margin-top:1rem">${esc(m.title)}</h1>
+<div class="card kv"><div><span>Case number</span>${esc(m.no)}</div><div><span>Client</span>${esc(cl(m.c).name)}</div><div><span>Court</span>${esc(m.court)}</div><div><span>Type</span>${m.type}</div><div><span>Advocate</span>${esc(m.adv)}</div><div><span>Status</span>${m.st}</div></div>
+<div class="card"><h2>Deadlines</h2>${dlTable(S.dls.filter((d) => d.m == m.id))}</div>
+<div class="card"><h2>Documents</h2>${docTable(S.docs.filter((d) => d.m == m.id))}<p><button class="btn" onclick="upload()">Upload document</button></p></div>
+<div class="card"><h2>Time and billing</h2><table><tr><th>Work done</th><th>Hours</th><th>Billing</th></tr>${T2.map((t) => `<tr><td>${esc(t.x)}</td><td>${t.h}</td><td>${t.b ? "Billed" : "Unbilled"}</td></tr>`).join("")}</table>
+<div class="bar" style="margin-top:1rem"><input id="tx" placeholder="What did you work on?"><input id="th" type="number" step="0.5" min="0" placeholder="Hours" style="flex:0 0 100px"><button class="btn" onclick="addTime()">Save time</button></div>
+${S.role == "Advocate" ? '<p class="who">Invoices are created by Admin or Accounts.</p>' : `<button class="btn" ${u ? "" : "disabled"} onclick="genInv()">Create invoice for ${u} hours (${K(u * RATE)})</button>`}</div>`;
+      }
+      function docTable(a) {
+        return `<table><tr><th>Name</th><th>Added by</th><th>Date</th><th>Access</th></tr>${a.map((d) => `<tr><td>${esc(d.n)}</td><td>${esc(d.by)}</td><td>${fd(d.d)}</td><td><span class="chip">${d.a}</span></td></tr>`).join("") || "<tr><td>No documents yet. Upload the first one.</td></tr>"}</table>`;
+      }
+      function clients() {
+        return `<div class="row">${S.clients
+          .map(
+            (c) =>
+              `<div class="card"><h2>${esc(c.name)}</h2><span class="who">${c.type} · ${esc(c.phone)}</span><p>${
+                S.matters
+                  .filter((m) => m.c == c.id)
+                  .map((m) => esc(m.no))
+                  .join(", ") || "No matters"
+              }</p></div>`,
+          )
+          .join("")}</div>`;
+      }
+      function cal() {
+        return `<div class="card"><h2>Add a deadline</h2><div class="bar"><select id="dm">${S.matters
+          .filter((m) => m.st != "Closed")
+          .map((m) => `<option value="${m.id}">${esc(m.no)}</option>`)
+          .join(
+            "",
+          )}</select><input id="dt" placeholder="Deadline title"><input id="dd" type="date"><select id="dk"><option>Hearing</option><option>Filing</option><option>Other</option></select><button class="btn" onclick="addDl()">Add deadline</button></div></div><div class="card">${dlTable(S.dls)}</div>`;
+      }
+      function invs() {
+        return `<div class="card"><table><tr><th>No.</th><th>Matter</th><th>Amount</th><th>Due</th><th>Status</th><th></th></tr>${S.inv.map((i) => `<tr><td>${i.no}</td><td>${esc(mt(i.m).no)}</td><td>${K(i.amt)}</td><td>${fd(i.due)}</td><td><span class="chip ${i.st == "Paid" ? "ok" : ""}">${i.st}</span></td><td>${i.st == "Paid" ? "" : `<button class="btn alt" onclick="pay('${i.no}')">Mark as paid</button>`}</td></tr>`).join("")}</table></div>`;
+      }
+      function render(keep) {
+        const a = document.getElementById("app");
+        if (!S.role) {
+          a.innerHTML = login();
+          return;
+        }
+        const P = {
+            dashboard: dash,
+            matters,
+            matter,
+            clients,
+            calendar: cal,
+            documents: () => `<div class="card">${docTable(S.docs)}</div>`,
+            invoices: invs,
+          },
+          cur = S.page == "matter" ? "matters" : S.page;
+        a.innerHTML = `<div class="shell"><aside><div class="brand">Wakili<i>Desk</i></div><div class="nav">${NAV[S.role].map((p) => `<button class="${p == cur ? "on" : ""}" onclick="go('${p}')">${LBL[p]}</button>`).join("")}</div></aside>
+<main><div class="top"><div class="note">Prototype with sample data. Nothing is saved.</div><div class="who">Signed in as ${S.role}<button class="btn alt" onclick="S.role=null;render()">Sign out</button></div></div>${P[S.page]()}</main></div>${S.toast ? `<div class="toast">${S.toast}</div>` : ""}`;
+        if (keep) {
+          const q = document.getElementById("q");
+          q.focus();
+          q.setSelectionRange(q.value.length, q.value.length);
+        }
+      }
+      render();
+    </script>
+  </body>
+</html>
