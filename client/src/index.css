@@ -299,3 +299,7 @@
 .field input { width: 100%; }
 .error { color: var(--bad); margin: .5rem 0; }
 .login .btn { text-align: center; }
+a.btn { display: inline-block; text-decoration: none; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 1rem; }
+.field select { width: 100%; }
+.actions { display: flex; gap: .5rem; margin-top: .8rem; }
